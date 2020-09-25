@@ -1,0 +1,83 @@
+- hosts: all
+  tasks:
+    - name: apt update
+      apt: update_cache=true
+      become: yes
+
+    - name: Install list of packages
+      apt: name=powerline state=present update_cache=true
+      become: yes
+      with_items:
+        - zsh
+        - git
+        - mercurial
+        - tmux
+        - screen
+
+- hosts: all
+  roles:
+    - role: gantsign.antigen
+      antigen_version: '2.2.3'
+      antigen_redis_sha256sum: 'bd3f1077050d52f459bc30fa3f025c44c528d625b4924a2f487fd2bacb89d61e'
+      users:
+        - username: vshemyatin
+          antigen_libraries:
+            - name: oh-my-zsh
+              env:
+                DISABLE_AUTO_UPDATE: '"true"' # Optional (this was hard-coded in the .zshrc of the `gantsign.oh-my-zsh` role)
+                DISABLE_AUTO_TITLE: '"true"'
+                POWERLEVEL9K_DIR_DEFAULT_BACKGROUND: '"steelblue"'
+                POWERLEVEL9K_DIR_HOME_BACKGROUND: '"steelblue"'
+                POWERLEVEL9K_DIR_HOME_SUBFOLDER_BACKGROUND: '"steelblue"'
+                POWERLEVEL9K_DIR_ETC_BACKGROUND: '"steelblue"'
+                POWERLEVEL9K_VCS_BACKENDS: '(git hg)'
+                POWERLEVEL9K_DIR_PATH_HIGHLIGHT_BOLD: '"true"'
+                POWERLEVEL9K_DISABLE_RPROMPT: '"true"'
+                #POWERLEVEL9K_LEFT_PROMPT_ELEMENTS=(context dir vcs)
+                #POWERLEVEL9K_RIGHT_PROMPT_ELEMENTS=(status root_indicator background_jobs history)
+                LESS: '"$LESS -X"'
+          antigen_theme:
+#            name: robbyrussell # This role has no default theme (unlike the `gantsign.oh-my-zsh` role)
+            name: romkatv/powerlevel10k
+          antigen_bundles:
+            - name: git # This role has no default bundles/plugins (unlike the `gantsign.oh-my-zsh` role)
+            - name: mercurial
+            - name: tmux
+            - name: screen
+            - name: pip
+            - name: command-not-found
+            - name: zsh-users_zsh-syntax-highlighting # Syntax highlighting bundle.
+              url: zsh-users/zsh-syntax-highlighting
+            - name: zsh-users_zsh-autosuggestions # Fish-like auto suggestions
+              url: zsh-users/zsh-autosuggestions
+            - name: zsh-users_zsh-completions # Extra zsh completions
+              url: zsh-users/zsh-completions
+#            # Syntax highlighting bundle.
+#            - name: zsh-syntax-highlighting # `name` is required (any valid file name will do so long as it's unique for the bundles)
+#              url: zsh-users/zsh-syntax-highlighting
+
+- hosts: all
+  tasks:
+    - name: Clone Powerline zsh theme
+      git:
+        repo: https://github.com/Galiaph/skel
+        dest: /home/vshemyatin/skel
+      become: no
+
+#- hosts: all
+#  tasks:
+#    - name: Create symbolic link for tmux
+#      file:
+#       src: "/home/vshemyatin/skel/.tmux.conf"
+#       dest: "/home/vshemyatin/.tmux.conf"
+#       state: link
+#      become: no
+
+- hosts: all
+  tasks:
+    - name: Create symbolic link for screen
+      file:
+       src: "/home/vshemyatin/skel/.screenrc"
+       dest: "/home/vshemyatin/.screenrc"
+       state: link
+      become: no
