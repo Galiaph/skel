@@ -42,7 +42,7 @@ mkdir ~/.screen && chmod 700 ~/.screen
 echo 'export SCREENDIR=$HOME/.screen' >> ~/.zshrc
 
 # Репа с конфигами:
-git clone https://gitlab.doct.org.ua/zaika/skel.git
+git clone https://github.com/Galiaph/skel.git
 ln -s ~/skel/.screenrc ~/
 ln -s ~/skel/.tmux.conf ~/
 
